@@ -1,0 +1,3 @@
+#!/bin/sh
+
+supervisor -e 'node,js,css,html' node app.js
