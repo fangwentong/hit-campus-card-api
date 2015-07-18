@@ -2,8 +2,8 @@
   "-1": "System is busy now.",
   "0": "OK",
   "80001": "You are forbidden here.",
-  "80002": "",
-  "80003": "",
+  "80002": "lack of token.",
+  "80003": "token error",
   "80004": "",
   "80005": "Internal Server error"
 }
