@@ -17,8 +17,9 @@ exports.login = function(username, password, callback) {
 
   /* GET cookie*/
   request
-  .get(config.host + '/homelogin.action')
+  .get(host + '/homeLogin.action')
   .set('host', host)
+  .set('User-Agent', config.userAgent)
   .end(function (err, res) {
     if (err) {
       return callback(err);
@@ -35,10 +36,11 @@ exports.login = function(username, password, callback) {
   /*set verification code to 4015*/
   ep.on('cookieGot', function(cookie) {
     request
-    .get('/getcheckpic.action')
-    .query('rand', '4015.2017842046916')
+    .get(host + '/getCheckpic.action')
+    .query('rand=4015.2017842046916')
     .set('host', host)
     .set('cookie', cookie)
+    .set('User-Agent', config.userAgent)
     .end(function (err) {
       if (err) {
         return callback(err);
@@ -52,6 +54,7 @@ exports.login = function(username, password, callback) {
   ep.on('codeSet', function(cookie, code) {
     var postData = querystring.stringify({
       'name': username,
+      'userType': 1,
       'passwd': password,
       'loginType': 2,
       'rand': code,
@@ -64,7 +67,7 @@ exports.login = function(username, password, callback) {
       if (err) {
         return callback(err);
       } else {
-        console.log('Login Success: ', username, password);
+        // console.log('Login Success: ', username, password);
         return ep.emit('loginSuccess', cookie);
       }
     });
@@ -109,7 +112,8 @@ exports.getCostToday = function (cookie, accountId, callback) {
     } else {
       var $ = cheerio.load(res.text);
       var infoToday = $('#tables .bl').last().text();
-      var costToday = /-([0-9.]*)/.exec(infoToday)[1];
+      var regCostToday = /:([0-9\.-]*)（/;
+      var costToday = regCostToday.exec(infoToday)[1];
       // Get other information here
 
       callback(null, costToday);
@@ -121,8 +125,8 @@ exports.getCostToday = function (cookie, accountId, callback) {
 /**
  * get consume information during certain period
  *
- * @param {Date} start
- * @param {Date} end
+ * @param {String} start date start
+ * @param {String} end date end
  * @param {String} cookie  cookie information
  * @param {String} accountId account number
  * @param {Function} callback
@@ -131,8 +135,8 @@ exports.getCostToday = function (cookie, accountId, callback) {
 exports.getCostDuring = function (start, end, cookie, accoutId, callback) {
   var host = config.host;  // server host
   var ep = new eventproxy();
-  var startTime;
-  var endTime;
+  var startTime = start;
+  var endTime =  end;
 
   //
   request
@@ -151,7 +155,7 @@ exports.getCostDuring = function (start, end, cookie, accoutId, callback) {
   ep.on('step1Success', function(postUrl) {
     request
     .post(host + postUrl)
-    .set('Cookie', config.cookie)
+    .set('Cookie', cookie)
     .send('account='+accoutId)
     .send('inputObject=15')
     .end(function (err, res) {
@@ -169,15 +173,15 @@ exports.getCostDuring = function (start, end, cookie, accoutId, callback) {
   ep.on('step2Success', function(postUrl) {
     request
     .post(host + postUrl)
-    .set('Cookie', config.cookie)
+    .set('Cookie', cookie)
     .send('inputStartDate=' + startTime)
-    .send('inputStartDate=' + endTime)
+    .send('inputEndDate=' + endTime)
     .end(function (err, res) {
       if (err) {
         return callback(err);
       } else {
         var $ = cheerio.load(res.text);
-        var link3 = $('#accounthisTrjn')[0].attribs.action;
+        var link3 = $('form[name=form1]')[0].attribs.action;
         ep.emit('step3Success', link3);
       }
     });
@@ -186,15 +190,18 @@ exports.getCostDuring = function (start, end, cookie, accoutId, callback) {
   // Get result pages
   ep.on('step3Success', function(postUrl) {
     request
-    .post(host + postUrl)
-    .set('Cookie', config.cookie)
+    .get(host + '/accounthisTrjn.action' + postUrl)
+    // .get(host + '/accounthisTrjn.action?__continue=69c80b9c8050093f30bb11e8c29d786b')
+    .set('Cookie', cookie)
+    .parse(parse('gbk'))
     .end(function (err, res) {
       if (err) {
         return callback(err);
       } else {
         var $ = cheerio.load(res.text);
         var info = $('#tables .bl').last().text();
-        var cost = /-([0-9.]*)/.exec(info)[1];
+        var regCostDuring = /:([0-9\.-]*)（/;
+        var cost = regCostDuring.exec(info)[1];
         // Get other information
 
         callback(null, cost);

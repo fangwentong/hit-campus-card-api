@@ -3,6 +3,7 @@ var router = express.Router();
 var spider = require('../utils/crawler.js');
 var crypto = require('crypto');
 var secret = require('../config/site.json').secret;
+var querystring = require('querystring');
 
 router.all('*', function(req, res, next) {
   // 签名验证
@@ -19,6 +20,15 @@ router.all('*', function(req, res, next) {
     err.status = 80003;
     next(err);
   } else {
+    try {
+      if ('application/x-www-form-urlencoded' === req.headers['Content-Type']) {
+        req.body = querystring.parse(body);
+      } else {
+        req.body = JSON.parse(body);
+      }
+    } catch (e) {
+      req.body = {};
+    }
     next();
   }
 });
