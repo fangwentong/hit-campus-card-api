@@ -67,7 +67,6 @@ exports.login = function(username, password, callback) {
       if (err) {
         return callback(err);
       } else {
-        // console.log('Login Success: ', username, password);
         return ep.emit('loginSuccess', cookie);
       }
     });

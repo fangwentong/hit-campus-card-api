@@ -9,7 +9,7 @@ router.all('*', function(req, res, next) {
   // 签名验证
   var body = req.rawBody;
   var signature = req.headers['x-api-signature'];
-  var err = new Error('');
+  var err = {};
   if(!signature) {
     err.status = 80002;
     next(err);
@@ -33,17 +33,17 @@ router.all('*', function(req, res, next) {
   }
 });
 
-router.post('/today', function (req, res) {
+router.post('/today', function (req, res, next) {
   var username = req.body.username;
   var password = req.body.password;
 
   spider.login(username, password, function(err, cookie, accountId) {
     if (err) {
-      console.log(err);
+      next(err);
     } else {
       spider.getCostToday(cookie, accountId, function (err, costToday) {
         if (err) {
-          console.log(err);
+          next(err);
         } else {
           res.send({
             errcode: 0,
@@ -55,7 +55,7 @@ router.post('/today', function (req, res) {
   });
 });
 
-router.post('/during', function (req, res) {
+router.post('/during', function (req, res, next) {
   var username = req.body.username;
   var password = req.body.password;
   var start = req.body.start;
@@ -63,11 +63,11 @@ router.post('/during', function (req, res) {
 
   spider.login(username, password, function(err, cookie, accountId) {
     if (err) {
-      console.log(err);
+      next(err);
     } else {
       spider.getCostDuring(start, end, cookie, accountId, function (err, cost) {
         if (err) {
-          console.log(err);
+          next(err);
         } else {
           res.send({
             errcode: 0,

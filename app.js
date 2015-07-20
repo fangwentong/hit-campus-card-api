@@ -9,7 +9,7 @@ var msgs = require('./config/feedback.json');
 var api = require('./routes/api');
 
 var logDirectory = __dirname + '/logs';
-if(!fs.existsSync(logDirectory))  fs.mkdirSync(logDirectory, '0755');
+if(!fs.existsSync(logDirectory)){ fs.mkdirSync(logDirectory, '0755'); }
 var accessLogfile =
   fs.createWriteStream(logDirectory + '/access.log', { flags: 'a' });
 var errorLogfile =
@@ -50,7 +50,7 @@ app.use('/api', api);
 
 // 未定义路由
 app.use(function(req, res, next) {
-  var err = new Error('');
+  var err = {};
   err.status = 80001;
   next(err);
 });
@@ -59,8 +59,14 @@ app.use(function(req, res, next) {
  * 错误处理
  */
 app.use(function(err, req, res, next) {
-  var meta = '[' + new Date() + ']' + req.url + '\n';
-  errorLogfile.write(meta + err.stack + '\n', 'utf-8');
+  if (!err.status) {
+    var meta = '[' + new Date() + ']' + req.url + '\n';
+    errorLogfile.write(meta + err.stack + '\n', 'utf-8');
+  }
+  // if (app.get('env') === 'development') console.log(err);
+  if (err.status === 404) {
+    err.status = 80004;
+  }
   var errcode = err.status || 80005;
   res.send({errcode: errcode, errmsg: msgs[errcode]});
 });
