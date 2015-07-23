@@ -29,9 +29,6 @@ router.all('*', function(req, res, next) {
     } catch (e) {
       req.body = {};
     }
-    console.log(req.headers['content-type']);
-    console.log(body);
-    console.log(req.body);
     next();
   }
 });
@@ -39,7 +36,6 @@ router.all('*', function(req, res, next) {
 router.post('/today', function (req, res, next) {
   var username = req.body.username;
   var password = req.body.password;
-  console.log(username, password);
 
   spider.login(username, password, function(err, cookie, accountId) {
     if (err) {

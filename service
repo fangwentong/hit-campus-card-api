@@ -1,0 +1,42 @@
+#!/bin/sh
+
+export NODE_ENV=production
+NAME=HIT-Campus-Card-Queries
+DESC="HIT Campus Card Queries API Platform"
+DAEMON="supervisor -e 'node,js,css,html' node bin/www"
+PIDFILE=`dirname $0`"/api.pid"
+
+case "$1" in
+    start)
+        if [ -e $PIDFILE ]; then
+            echo "$PIDFILE already exists."
+            exit 0
+        fi
+        echo "Start $DESC: "
+                nohup $DAEMON > /dev/null &
+        echo $! > $PIDFILE
+        cat $PIDFILE
+        echo "$NAME was started."
+            ;;
+    stop)
+        echo "Stopping $DESC: "
+            pid=`cat $PIDFILE`
+            echo "killing "+$pid
+        kill $pid
+            rm $PIDFILE
+        echo "$NAME was killed."
+            ;;
+    restart)
+        echo "Stopping $DESC: "
+            pid=`cat $PIDFILE`
+            echo "killing "+$pid
+        kill $pid
+        rm $PIDFILE
+        echo "Start $DESC: "
+                nohup $DAEMON > /dev/null &
+        echo $! > $PIDFILE
+        cat $PIDFILE
+        echo "$NAME was restarted."
+esac
+
+exit 0
