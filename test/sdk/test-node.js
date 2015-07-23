@@ -1,7 +1,7 @@
 var api = require('../../sdk/node-sdk');
 
-var username = '11x0010101';
-var password = 'xxxxxx';
+var username = '1xx0xx0101';
+var password = '000000';
 var start = '20150713';
 var end = '20150720';
 

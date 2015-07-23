@@ -30,4 +30,4 @@ node_modules
 *~
 *.swp
 *.bak
-config/mail.json
+*.py[co]

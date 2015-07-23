@@ -1,18 +1,52 @@
 API Reference
 ---
 
-# 获取信息
+### 获取信息
 
-- 获取今日消费信息
+#### POST 方法
 
-    GET /api/today
+- Get consumption information today
 
-- 获取特定区间消费信息
+    **POST /api/today**
 
-    GET /api/during
+    Headers required:
+
+      * Host
+      * Content-Type: `application/x-www-form-urlencoded` or `application/json`
+      * Content-Length
+      * x-api-signature: HMAC hex digest of the payload, using site secret as the key.
+
+    Payload:
+
+      * username
+      * password
 
 
-### 返回码
+
+- Get consumption information during certain time period
+
+    **POST /api/during**
+
+    Headers:
+
+      * Host
+      * Content-Type: `application/x-www-form-urlencoded` or `application/json`
+      * Content-Length
+      * x-api-signature: HMAC hex digest of the payload, using site secret as the key.
+
+    Payloads:
+
+      * username
+      * password
+      * start: start date, such as '20150105'
+      * end: end date, such as '20150720'
+
+#### GET 方法
+
+**api_key注册功能尚未完善**
+
+
+### 全局返回码
 
 |返回码|说明|
 |:-:|:-:|

@@ -7,7 +7,7 @@ var querystring = require('querystring');
 
 router.all('*', function(req, res, next) {
   // 签名验证
-  var body = req.rawBody;
+  var body = req.rawBody.toString();
   var signature = req.headers['x-api-signature'];
   var err = {};
   if(!signature) {
@@ -21,7 +21,7 @@ router.all('*', function(req, res, next) {
     next(err);
   } else {
     try {
-      if ('application/x-www-form-urlencoded' === req.headers['Content-Type']) {
+      if ('application/x-www-form-urlencoded' === req.headers['content-type']) {
         req.body = querystring.parse(body);
       } else {
         req.body = JSON.parse(body);
@@ -29,6 +29,9 @@ router.all('*', function(req, res, next) {
     } catch (e) {
       req.body = {};
     }
+    console.log(req.headers['content-type']);
+    console.log(body);
+    console.log(req.body);
     next();
   }
 });
@@ -36,6 +39,7 @@ router.all('*', function(req, res, next) {
 router.post('/today', function (req, res, next) {
   var username = req.body.username;
   var password = req.body.password;
+  console.log(username, password);
 
   spider.login(username, password, function(err, cookie, accountId) {
     if (err) {
