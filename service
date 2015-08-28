@@ -3,7 +3,7 @@
 export NODE_ENV=production
 NAME=HIT-Campus-Card-Queries
 DESC="HIT Campus Card Queries API Platform"
-DAEMON="supervisor -e 'node,js,css,html' node bin/www"
+DAEMON="supervisor -e 'node,js,css,html' node app.js"
 PIDFILE=`dirname $0`"/api.pid"
 
 case "$1" in
