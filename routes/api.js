@@ -99,7 +99,6 @@ router.post('/general', function (req, res, next) {
   var username = req.body.username;
   var password = req.body.password;
 
-  console.log('Here`');
   spider.login(username, password, function(err, cookie, accountId) {
     if (err) {
       err.status = 80004;

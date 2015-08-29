@@ -217,12 +217,10 @@ exports.getGeneral = function (cookie, accountId, callback) {
   var today = now.format('YYYYMMDD');
   var last7 = now.add(-7, 'days').format('YYYYMMDD');
   var last30 = now.add(-30, 'days').format('YYYYMMDD');
-  console.log(today, last7, last30);
   exports.getCostToday(cookie, accountId, function(err, cost) {
     if (err) {
       callback(err);
     } else {
-      console.log('today', cost);
       return ep.emit('today', cost);
     }
   });
@@ -230,7 +228,6 @@ exports.getGeneral = function (cookie, accountId, callback) {
     if (err) {
       callback(err);
     } else {
-      console.log('last7', cost);
       return ep.emit('last7', cost);
     }
   });
@@ -238,7 +235,6 @@ exports.getGeneral = function (cookie, accountId, callback) {
     if (err) {
       callback(err);
     } else {
-      console.log('last30', cost);
       return ep.emit('last30', cost);
     }
   });
