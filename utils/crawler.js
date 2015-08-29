@@ -4,6 +4,7 @@ var parse = require('superagentparse');
 var config = require('../config/crawler.json');
 var querystring = require('querystring');
 var eventproxy = require('eventproxy');
+var moment = require('moment');
 
 /**
  * Login with username and password
@@ -93,7 +94,7 @@ exports.login = function(username, password, callback) {
 /**
  * consumption today
  * @param {String} cookie Cookie infomation
- * @param {String} accoutId accout number
+ * @param {String} accountId account number
  * @param {Function} callback Callback function
  */
 exports.getCostToday = function (cookie, accountId, callback) {
@@ -115,6 +116,7 @@ exports.getCostToday = function (cookie, accountId, callback) {
       var costToday = regCostToday.exec(infoToday)[1];
       // Get other information here
 
+      if (costToday[0] === '-') costToday = costToday.slice(1);
       callback(null, costToday);
     }
   });
@@ -131,7 +133,7 @@ exports.getCostToday = function (cookie, accountId, callback) {
  * @param {Function} callback
  */
 
-exports.getCostDuring = function (start, end, cookie, accoutId, callback) {
+exports.getCostDuring = function (start, end, cookie, accountId, callback) {
   var host = config.host;  // server host
   var ep = new eventproxy();
   var startTime = start;
@@ -155,7 +157,7 @@ exports.getCostDuring = function (start, end, cookie, accoutId, callback) {
     request
     .post(host + postUrl)
     .set('Cookie', cookie)
-    .send('account='+accoutId)
+    .send('account='+accountId)
     .send('inputObject=15')
     .end(function (err, res) {
       if (err) {
@@ -190,7 +192,6 @@ exports.getCostDuring = function (start, end, cookie, accoutId, callback) {
   ep.on('step3Success', function(postUrl) {
     request
     .get(host + '/accounthisTrjn.action' + postUrl)
-    // .get(host + '/accounthisTrjn.action?__continue=69c80b9c8050093f30bb11e8c29d786b')
     .set('Cookie', cookie)
     .parse(parse('gbk'))
     .end(function (err, res) {
@@ -203,9 +204,49 @@ exports.getCostDuring = function (start, end, cookie, accoutId, callback) {
         var cost = regCostDuring.exec(info)[1];
         // Get other information
 
+        if (cost[0] === '-') cost = cost.slice(1);
         callback(null, cost);
       }
     });
   });
 };
 
+exports.getGeneral = function (cookie, accountId, callback) {
+  var ep = new eventproxy();
+  var now = moment();
+  var today = now.format('YYYYMMDD');
+  var last7 = now.add(-7, 'days').format('YYYYMMDD');
+  var last30 = now.add(-30, 'days').format('YYYYMMDD');
+  console.log(today, last7, last30);
+  exports.getCostToday(cookie, accountId, function(err, cost) {
+    if (err) {
+      callback(err);
+    } else {
+      console.log('today', cost);
+      return ep.emit('today', cost);
+    }
+  });
+  exports.getCostDuring(last7, today, cookie, accountId, function(err, cost) {
+    if (err) {
+      callback(err);
+    } else {
+      console.log('last7', cost);
+      return ep.emit('last7', cost);
+    }
+  });
+  exports.getCostDuring(last30, today, cookie, accountId, function(err, cost) {
+    if (err) {
+      callback(err);
+    } else {
+      console.log('last30', cost);
+      return ep.emit('last30', cost);
+    }
+  });
+  ep.all('today', 'last7', 'last30', function(today, last7, last30) {
+    return callback(null, {
+      'today': today,
+      'last7': last7,
+      'last30': last30,
+    });
+  });
+};

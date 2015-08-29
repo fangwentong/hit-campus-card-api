@@ -63,6 +63,7 @@ router.post('/during', function (req, res, next) {
 
   spider.login(username, password, function(err, cookie, accountId) {
     if (err) {
+      err.status = 80004;
       next(err);
     } else {
       spider.getCostDuring(start, end, cookie, accountId, function (err, cost) {
@@ -72,6 +73,47 @@ router.post('/during', function (req, res, next) {
           res.send({
             errcode: 0,
             cost: cost,
+          });
+        }
+      });
+    }
+  });
+});
+
+router.post('/verification', function(req, res, next) {
+  var username = req.body.username;
+  var password = req.body.password;
+  spider.login(username, password, function(err) {
+    if (err) {
+      err.status = 80004;
+      next(err);
+    } else {
+      res.send({
+        errcode: 0,
+      });
+    }
+  });
+});
+
+router.post('/general', function (req, res, next) {
+  var username = req.body.username;
+  var password = req.body.password;
+
+  console.log('Here`');
+  spider.login(username, password, function(err, cookie, accountId) {
+    if (err) {
+      err.status = 80004;
+      next(err);
+    } else {
+      spider.getGeneral(cookie, accountId, function (err, cost) {
+        if (err) {
+          next(err);
+        } else {
+          res.send({
+            errcode: 0,
+            today: cost.today,
+            last7: cost.last7,
+            last30: cost.last30,
           });
         }
       });

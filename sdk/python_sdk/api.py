@@ -29,7 +29,7 @@ class ApiClient():
             res = httpClient.getresponse()
             data = res.read()
             httpClient.close()
-            return json.loads(data)
+            return data
         except Exception, e:
             print e
 
@@ -53,6 +53,47 @@ class ApiClient():
             res = httpClient.getresponse()
             data = res.read()
             httpClient.close()
-            return json.loads(data)
+            return data
         except Exception, e:
             print e
+
+    def get_general(self, username, password):
+        host = self.host + (':' + str(self.port) if self.port != 80 else '')
+        try:
+            postData = urllib.urlencode(dict(username = username, password = password))
+            headers = {
+                'Host': host,
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Length': len(postData),
+                'x-api-signature': self.generateSignature(postData)
+            }
+            httpClient = httplib.HTTPConnection(self.host, self.port)
+            httpClient.request('POST', '/api/general', postData, headers);
+            res = httpClient.getresponse()
+            data = res.read()
+            httpClient.close()
+            return data
+        except Exception, e:
+            print e
+
+    def verify(self, username, password):
+        host = self.host + (':' + str(self.port) if self.port != 80 else '')
+        try:
+            postData = urllib.urlencode(dict(username = username, password = password))
+            headers = {
+                'Host': host,
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Length': len(postData),
+                'x-api-signature': self.generateSignature(postData)
+            }
+            httpClient = httplib.HTTPConnection(self.host, self.port)
+            httpClient.request('POST', '/api/verification', postData, headers);
+            res = httpClient.getresponse()
+            data = res.read()
+            httpClient.close()
+            if json.dumps(data)['status'] == 0:
+                return True
+            else:
+                return False
+        except Exception:
+            return False
