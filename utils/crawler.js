@@ -115,9 +115,24 @@ exports.getCostToday = function (cookie, accountId, callback) {
       var regCostToday = /:([0-9\.-]*)（/;
       var costToday = regCostToday.exec(infoToday)[1];
       // Get other information here
+      var list = $('#tables .listbg');
+      var list2 = $('#tables .listbg2');
+      var history = '';
+
+      for (var i = 0; i < list.length; i++) {
+        var time = list[i].children[1].children[0].data.trim().split(' ')[1];
+        var location = list[i].children[9].children[0].data.trim();
+        var cost = list[i].children[13].children[0].data.trim();
+        history += [time, location, cost].join('  ') + '元\n';
+        var time2 = list2[i].children[1].children[0].data.trim().split(' ')[1];
+        var location2 = list2[i].children[9].children[0].data.trim();
+        var cost2 = list2[i].children[13].children[0].data.trim();
+        history += [time2, location2, cost2].join('  ') + '元\n';
+      }
 
       if (costToday[0] === '-') costToday = costToday.slice(1);
-      callback(null, costToday);
+      var balance = list[0].children[15].children[0].data.trim();
+      callback(null, costToday, history, balance);
     }
   });
 };

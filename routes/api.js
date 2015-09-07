@@ -41,13 +41,15 @@ router.post('/today', function (req, res, next) {
     if (err) {
       next(err);
     } else {
-      spider.getCostToday(cookie, accountId, function (err, costToday) {
+      spider.getCostToday(cookie, accountId, function (err, costToday, history, balance) {
         if (err) {
           next(err);
         } else {
           res.send({
             errcode: 0,
             cost: costToday,
+            detail: history,
+            balance: balance,
           });
         }
       });
