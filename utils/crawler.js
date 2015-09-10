@@ -119,15 +119,20 @@ exports.getCostToday = function (cookie, accountId, callback) {
       var list2 = $('#tables .listbg2');
       var history = '';
 
-      for (var i = 0; i < list.length; i++) {
-        var time = list[i].children[1].children[0].data.trim().split(' ')[1];
-        var location = list[i].children[9].children[0].data.trim();
-        var cost = list[i].children[13].children[0].data.trim();
-        history += [time, location, cost].join('  ') + '元\n';
-        var time2 = list2[i].children[1].children[0].data.trim().split(' ')[1];
-        var location2 = list2[i].children[9].children[0].data.trim();
-        var cost2 = list2[i].children[13].children[0].data.trim();
-        history += [time2, location2, cost2].join('  ') + '元\n';
+      var getConRecord = function(item) {
+        var time = item.children[1].children[0].data.trim().split(' ')[1];
+        var location = item.children[9].children[0].data.trim();
+        var cost = item.children[13].children[0].data.trim();
+        return [time, location, cost].join('  ') + '元\n';
+      };
+
+      for (var i = 0; i < list2.length; i++) {
+        history += getConRecord(list[i]);
+        history += getConRecord(list2[i]);
+      }
+
+      if (list.length > list2.length) {
+        history += getConRecord(list[list.length-1]);
       }
 
       if (costToday[0] === '-') costToday = costToday.slice(1);
