@@ -31,3 +31,4 @@ node_modules
 *.swp
 *.bak
 *.py[co]
+utils/test.js

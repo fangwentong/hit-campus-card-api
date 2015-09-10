@@ -261,7 +261,7 @@ exports.reportLoss = function (cookie, accountId, password, callback) {
       callback(err);
     } else {
       var $ = cheerio.load(res.text);
-      var feedback = $('p .biaotou').children[0].data;
+      var feedback = $('p.biaotou')[0].children[0].data;
       callback(null, feedback);
     }
   });
@@ -289,7 +289,7 @@ exports.unreportLoss = function (cookie, accountId, password, callback) {
       callback(err);
     } else {
       var $ = cheerio.load(res.text);
-      var feedback = $('p .biaotou').children[0].data;
+      var feedback = $('p.biaotou')[0].children[0].data;
       callback(null, feedback);
     }
   });
