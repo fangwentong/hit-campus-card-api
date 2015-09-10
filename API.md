@@ -5,34 +5,42 @@ API Reference
 
 #### POST 方法
 
-- Get consumption information today
+##### 获取信息
 
-    **POST /api/today**
+- 获取今日消费信息
+
+    POST /api/today
 
     Headers required:
 
       * Host
       * Content-Type: `application/x-www-form-urlencoded` or `application/json`
       * Content-Length
-      * x-api-signature: HMAC hex digest of the payload, using site secret as the key.
+      * x-api-signature: HMAC hex digest of the payload, using site's secret as the key.
 
     Payload:
 
       * username
       * password
 
+    Returns @ JSON:
+
+      * errcode: 返回码
+      * cost: 今日消费数额
+      * detail: 今日详细消费记录
+      * balance: 余额
 
 
-- Get consumption information during certain time period
+- 获取特定时间段消费信息
 
-    **POST /api/during**
+    POST /api/during
 
-    Headers:
+    Headers required:
 
       * Host
       * Content-Type: `application/x-www-form-urlencoded` or `application/json`
       * Content-Length
-      * x-api-signature: HMAC hex digest of the payload, using site secret as the key.
+      * x-api-signature: HMAC hex digest of the payload, using site's secret as the key.
 
     Payloads:
 
@@ -40,6 +48,55 @@ API Reference
       * password
       * start: start date, such as '20150105'
       * end: end date, such as '20150720'
+
+    Returns @ JSON:
+
+      * errcode: 返回码
+      * cost: 消费数额
+
+##### 挂失
+
+- 校园卡挂失
+
+    POST /api/reportloss
+
+    Headers required:
+
+      * Host
+      * Content-Type: `application/x-www-form-urlencoded` or `application/json`
+      * Content-Length
+      * x-api-signature: HMAC hex digest of the payload, using site's secret as the key.
+
+    Payload:
+
+      * username
+      * password
+
+    Returns @ JSON:
+
+      * errcode: 返回码
+      * errmsg: 说明
+
+- 校园卡取消挂失
+
+    POST /api/unreportloss
+
+    Headers required:
+
+      * Host
+      * Content-Type: `application/x-www-form-urlencoded` or `application/json`
+      * Content-Length
+      * x-api-signature: HMAC hex digest of the payload, using site's secret as the key.
+
+    Payload:
+
+      * username
+      * password
+
+    Returns @ JSON:
+
+      * errcode: 返回码
+      * errmsg: 说明
 
 #### GET 方法
 

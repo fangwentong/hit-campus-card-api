@@ -19,6 +19,13 @@
       * username
       * password
 
+    Returns @ JSON:
+
+      * errcode: 返回码
+      * cost: 今日消费数额
+      * detail: 今日详细消费记录
+      * balance: 余额
+
 
 - 获取特定时间段消费信息
 
@@ -37,6 +44,55 @@
       * password
       * start: start date, such as '20150105'
       * end: end date, such as '20150720'
+
+    Returns @ JSON:
+
+      * errcode: 返回码
+      * cost: 消费数额
+
+### 挂失
+
+- 校园卡挂失
+
+    POST /api/reportloss
+
+    Headers required:
+
+      * Host
+      * Content-Type: `application/x-www-form-urlencoded` or `application/json`
+      * Content-Length
+      * x-api-signature: HMAC hex digest of the payload, using site's secret as the key.
+
+    Payload:
+
+      * username
+      * password
+
+    Returns @ JSON:
+
+      * errcode: 返回码
+      * errmsg: 说明
+
+- 校园卡取消挂失
+
+    POST /api/unreportloss
+
+    Headers required:
+
+      * Host
+      * Content-Type: `application/x-www-form-urlencoded` or `application/json`
+      * Content-Length
+      * x-api-signature: HMAC hex digest of the payload, using site's secret as the key.
+
+    Payload:
+
+      * username
+      * password
+
+    Returns @ JSON:
+
+      * errcode: 返回码
+      * errmsg: 说明
 
 ### 全局返回码
 
