@@ -74,22 +74,31 @@ exports.login = function(username, password, callback) {
   });
 
   /* Fetch User id */
+
   ep.on('loginSuccess', function(cookie) {
     request
-    .get(host + '/accounthisTrjn.action')
+    .get(host + '/accountcardUser.action')
     .set('Cookie', cookie)
     .end(function (err, res) {
       if (err) {
         return callback(err);
       } else {
         var $ = cheerio.load(res.text);
-        var accountId = $('#account').val();
-        callback(null, cookie, accountId);
+        var name = $('.neiwen div')[1].children[0].data;
+        var accountId = $('.neiwen div')[3].children[0].data;
+        var studentId = $('.neiwen div')[9].children[0].data;
+        var balance = $('.neiwen')[46].children[0].data.split('（', 2)[0];
+        var userInfo = {
+          'name': name,
+          'accountId': accountId,
+          'studnetId': studentId,
+          'balance': balance,
+        };
+        callback(null, cookie, userInfo);
       }
     });
   });
 };
-
 
 /**
  * consumption today
@@ -136,8 +145,7 @@ exports.getCostToday = function (cookie, accountId, callback) {
       }
 
       if (costToday[0] === '-') costToday = costToday.slice(1);
-      var balance = list[0].children[15].children[0].data.trim();
-      callback(null, costToday, history, balance);
+      callback(null, costToday, history);
     }
   });
 };

@@ -37,11 +37,11 @@ router.post('/today', function (req, res, next) {
   var username = req.body.username;
   var password = req.body.password;
 
-  spider.login(username, password, function(err, cookie, accountId) {
+  spider.login(username, password, function(err, cookie, userInfo) {
     if (err) {
       next(err);
     } else {
-      spider.getCostToday(cookie, accountId, function (err, costToday, history, balance) {
+      spider.getCostToday(cookie, userInfo.accountId, function (err, costToday, history) {
         if (err) {
           next(err);
         } else {
@@ -49,7 +49,7 @@ router.post('/today', function (req, res, next) {
             errcode: 0,
             cost: costToday,
             detail: history,
-            balance: balance,
+            balance: userInfo.balance,
           });
         }
       });
@@ -63,12 +63,12 @@ router.post('/during', function (req, res, next) {
   var start = req.body.start;
   var end = req.body.end;
 
-  spider.login(username, password, function(err, cookie, accountId) {
+  spider.login(username, password, function(err, cookie, userInfo) {
     if (err) {
       err.status = 80004;
       next(err);
     } else {
-      spider.getCostDuring(start, end, cookie, accountId, function (err, cost) {
+      spider.getCostDuring(start, end, cookie, userInfo.accountId, function (err, cost) {
         if (err) {
           next(err);
         } else {
@@ -101,12 +101,12 @@ router.post('/general', function (req, res, next) {
   var username = req.body.username;
   var password = req.body.password;
 
-  spider.login(username, password, function(err, cookie, accountId) {
+  spider.login(username, password, function(err, cookie, userInfo) {
     if (err) {
       err.status = 80004;
       next(err);
     } else {
-      spider.getGeneral(cookie, accountId, function (err, cost) {
+      spider.getGeneral(cookie, userInfo.accountId, function (err, cost) {
         if (err) {
           next(err);
         } else {
