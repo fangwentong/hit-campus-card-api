@@ -33,6 +33,21 @@ router.all('*', function(req, res, next) {
   }
 });
 
+router.post('/verification', function(req, res, next) {
+  var username = req.body.username;
+  var password = req.body.password;
+  spider.login(username, password, function(err) {
+    if (err) {
+      err.status = 80004;
+      next(err);
+    } else {
+      res.send({
+        errcode: 0,
+      });
+    }
+  });
+});
+
 router.post('/today', function (req, res, next) {
   var username = req.body.username;
   var password = req.body.password;
@@ -82,16 +97,49 @@ router.post('/during', function (req, res, next) {
   });
 });
 
-router.post('/verification', function(req, res, next) {
+router.post('/reportloss', function (req, res, next) {
   var username = req.body.username;
   var password = req.body.password;
-  spider.login(username, password, function(err) {
+
+  spider.login(username, password, function(err, cookie, userInfo) {
     if (err) {
       err.status = 80004;
       next(err);
     } else {
-      res.send({
-        errcode: 0,
+      spider.reportLoss(cookie, userInfo.accountId, password, function (err, feedback) {
+        if (err) {
+          err.status = 80005;
+          next(err);
+        } else {
+          res.send({
+            errcode: 0,
+            errmsg: feedback,
+          });
+        }
+      });
+    }
+  });
+});
+
+router.post('/unreportloss', function (req, res, next) {
+  var username = req.body.username;
+  var password = req.body.password;
+
+  spider.login(username, password, function(err, cookie, userInfo) {
+    if (err) {
+      err.status = 80004;
+      next(err);
+    } else {
+      spider.reportLoss(cookie, userInfo.accountId, password, function (err, feedback) {
+        if (err) {
+          err.status = 80005;
+          next(err);
+        } else {
+          res.send({
+            errcode: 0,
+            errmsg: feedback,
+          });
+        }
       });
     }
   });

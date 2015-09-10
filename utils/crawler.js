@@ -239,6 +239,62 @@ exports.getCostDuring = function (start, end, cookie, accountId, callback) {
   });
 };
 
+/**
+ * Report loss of campus card
+ *
+ * @param {String} cookie  cookie information
+ * @param {String} accountId account number
+ * @param {String} password
+ * @param {Function} callback
+ */
+exports.reportLoss = function (cookie, accountId, password, callback) {
+  var host = config.host;  // server host
+
+  request
+  .post(host + '/accountDoLoss.action')
+  .set('Cookie', cookie)
+  .send('account=' + accountId)
+  .send('passwd=' + password)
+  .parse(parse('gbk'))
+  .end(function (err, res) {
+    if (err) {
+      callback(err);
+    } else {
+      var $ = cheerio.load(res.text);
+      var feedback = $('p .biaotou').children[0].data;
+      callback(null, feedback);
+    }
+  });
+};
+
+/**
+ * Cancel report loss of campus card
+ *
+ * @param {String} cookie  cookie information
+ * @param {String} accountId account number
+ * @param {String} password
+ * @param {Function} callback
+ */
+exports.unreportLoss = function (cookie, accountId, password, callback) {
+  var host = config.host;  // server host
+
+  request
+  .post(host + '/accountDoreLoss.action')
+  .set('Cookie', cookie)
+  .send('account=' + accountId)
+  .send('passwd=' + password)
+  .parse(parse('gbk'))
+  .end(function (err, res) {
+    if (err) {
+      callback(err);
+    } else {
+      var $ = cheerio.load(res.text);
+      var feedback = $('p .biaotou').children[0].data;
+      callback(null, feedback);
+    }
+  });
+};
+
 exports.getGeneral = function (cookie, accountId, callback) {
   var ep = new eventproxy();
   var now = moment();
