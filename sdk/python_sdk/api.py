@@ -4,9 +4,14 @@
 import urllib, httplib, hashlib, hmac, json
 
 httpClient = None
+site = {
+    'host': '',
+    'port': 80,
+    'token': 'harbin',
+}
 
 class ApiClient():
-    def __init__(self, host, port, token):
+    def __init__(self, host = site["host"], port = site["port"], token = site["token"]):
         self.host = host
         self.port = port
         self.token = token
@@ -29,7 +34,7 @@ class ApiClient():
             res = httpClient.getresponse()
             data = res.read()
             httpClient.close()
-            return data
+            return json.loads(data)
         except Exception, e:
             print e
 
@@ -53,7 +58,7 @@ class ApiClient():
             res = httpClient.getresponse()
             data = res.read()
             httpClient.close()
-            return data
+            return json.loads(data)
         except Exception, e:
             print e
 
@@ -72,7 +77,7 @@ class ApiClient():
             res = httpClient.getresponse()
             data = res.read()
             httpClient.close()
-            return data
+            return json.loads(data)
         except Exception, e:
             print e
 
@@ -91,9 +96,50 @@ class ApiClient():
             res = httpClient.getresponse()
             data = res.read()
             httpClient.close()
-            if json.dumps(data)['status'] == 0:
+            result = json.loads(data)
+            if result.get('errcode', '') == 0:
                 return True
             else:
                 return False
+        except ValueError:
+            return None
         except Exception:
             return False
+
+    def report_loss(self, username, password):
+        host = self.host + (':' + str(self.port) if self.port != 80 else '')
+        try:
+            postData = urllib.urlencode(dict(username = username, password = password))
+            headers = {
+                'Host': host,
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Length': len(postData),
+                'x-api-signature': self.generateSignature(postData)
+            }
+            httpClient = httplib.HTTPConnection(self.host, self.port)
+            httpClient.request('POST', '/api/reportloss', postData, headers)
+            res = httpClient.getresponse()
+            data = res.read()
+            httpClient.close()
+            return json.loads(data)
+        except Exception, e:
+            print str(e)
+
+    def cancel_report_loss(self, username, password):
+        host = self.host + (':' + str(self.port) if self.port != 80 else '')
+        try:
+            postData = urllib.urlencode(dict(username = username, password = password))
+            headers = {
+                'Host': host,
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Length': len(postData),
+                'x-api-signature': self.generateSignature(postData)
+            }
+            httpClient = httplib.HTTPConnection(self.host, self.port)
+            httpClient.request('POST', '/api/unreportloss', postData, headers)
+            res = httpClient.getresponse()
+            data = res.read()
+            httpClient.close()
+            return json.loads(data)
+        except Exception, e:
+            print str(e)

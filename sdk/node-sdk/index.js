@@ -13,65 +13,72 @@ module.exports = function(config) {
   }
 
   /**
-  * async
+  * get information from certain path
   * @param {String} username Username
   * @param {String} password Password
   * @param {Function} callback Callback function
   */
-  function getCostToday(username, password, callback) {
-    var postData = JSON.stringify({
-      'username': username,
-      'password': password,
-    });
-
-    var options = {
-      hostname: config.host,
-      port: config.port,
-      path: '/api/today',
-      method: 'POST',
-      headers: {
-        'Host': config.host,
-        'Content-Type': 'application/json',
-        'Content-Length': postData.length,
-        'x-api-signature': generateSignature(config.token, postData),
-      }
-    };
-
-    var req = http.request(options, function(res) {
-      var buffer = [];
-      var bufferLength = 0;
-      res.on('data', function (chunk) {
-        buffer.push(chunk);
-        bufferLength += chunk.length;
+  function getFrom(path) {
+    return function (username, password, callback) {
+      var postData = JSON.stringify({
+        'username': username,
+        'password': password,
       });
-      res.on('end', function (chunk) {
-        if (chunk) {
+
+      var options = {
+        hostname: config.host,
+        port: config.port,
+        path: path,
+        method: 'POST',
+        headers: {
+          'Host': config.host,
+          'Content-Type': 'application/json',
+          'Content-Length': postData.length,
+          'x-api-signature': generateSignature(config.token, postData),
+        }
+      };
+
+      var req = http.request(options, function(res) {
+        var buffer = [];
+        var bufferLength = 0;
+        res.on('data', function (chunk) {
           buffer.push(chunk);
           bufferLength += chunk.length;
-        }
-        var data = Buffer.concat(buffer, bufferLength);
-        var result;
+        });
+        res.on('end', function (chunk) {
+          if (chunk) {
+            buffer.push(chunk);
+            bufferLength += chunk.length;
+          }
+          var data = Buffer.concat(buffer, bufferLength);
+          var result;
 
-        try {
-          result = JSON.parse(data);
-        } catch (e) {
-          result = false;
-        }
-        callback(null, result);
+          try {
+            result = JSON.parse(data);
+          } catch (e) {
+            result = false;
+          }
+          callback(null, result);
+        });
       });
-    });
 
-    req.setTimeout(config.timeout, function() {
-      callback('Request timeout.');
-    });
+      req.setTimeout(config.timeout, function() {
+        callback('Request timeout.');
+      });
 
-    req.on('error', function (err) {
-      callback(err);
-    });
+      req.on('error', function (err) {
+        callback(err);
+      });
 
-    req.write(postData);
-    req.end();
+      req.write(postData);
+      req.end();
+    };
   }
+
+  var getCostToday = getFrom('/api/today');
+  var verify = getFrom('/api/verification');
+  var reportLoss = getFrom('/api/reportloss');
+  var unReportLoss = getFrom('/api/unreportloss');
 
   /**
   * async
@@ -143,5 +150,8 @@ module.exports = function(config) {
     getCostToday: getCostToday,
     getCostDuring: getCostDuring,
     generateSignature: generateSignature,
+    verify: verify,
+    reportLoss: reportLoss,
+    unReportLoss: unReportLoss,
   };
 };

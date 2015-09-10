@@ -130,7 +130,7 @@ router.post('/unreportloss', function (req, res, next) {
       err.status = 80004;
       next(err);
     } else {
-      spider.reportLoss(cookie, userInfo.accountId, password, function (err, feedback) {
+      spider.unreportLoss(cookie, userInfo.accountId, password, function (err, feedback) {
         if (err) {
           err.status = 80005;
           next(err);
