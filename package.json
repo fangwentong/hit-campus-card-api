@@ -1,6 +1,6 @@
 {
-  "name": "API",
-  "version": "0.0.1",
+  "name": "Campus-Card-Queries",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "start": "node app.js"

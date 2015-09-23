@@ -108,10 +108,11 @@
 
 ### SDK
 
-目前提供了 [python](sdk/python_sdk) 和 [Node.js](sdk/node-sdk) 版本的SDK.
+目前提供了 [Python](sdk/python_sdk) 和 [Node.js](sdk/node-sdk) 版本的SDK.
 
 ### Deploy
 
 ```
+npm install
 ./service start|stop|restart
 ```

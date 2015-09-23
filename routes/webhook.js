@@ -30,7 +30,7 @@ module.exports = function(req, res) {
     var exec = require('child_process').exec;
     var remote = 'origin';
     var branch = 'master';
-    var cmdStr = 'git pull ' + remote + ' ' + branch;
+    var cmdStr = 'npm install & git pull ' + remote + ' ' + branch;
 
     exec(cmdStr, function (err, stdout) {
       if (err) {
