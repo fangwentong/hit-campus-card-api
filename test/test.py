@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 #coding=utf-8
 
-from python_sdk import ApiClient
+import sys, os
+current_path = os.path.dirname(__file__)
+sys.path.insert(0, os.path.join(current_path, '../sdk'))    # 网站根目录加入搜索路径
 
+from python_sdk import ApiClient
 
 username = '1100310101'
 password = '000000'

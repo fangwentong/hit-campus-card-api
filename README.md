@@ -1,7 +1,31 @@
 校园卡消费查询API
 ---
 
-### 获取信息
+### 身份验证
+
+- 验证身份是否合法
+
+    POST /api/verification
+
+    Headers required:
+
+      * Host
+      * Content-Type: `application/x-www-form-urlencoded` or `application/json`
+      * Content-Length
+      * x-api-signature: HMAC hex digest of the payload, using site's secret as the key.
+
+    Payload:
+
+      * username
+      * password
+
+    Returns @ JSON:
+
+      * errcode: 返回码
+      * errmsg: 说明
+
+
+### 获取消费信息
 
 - 获取今日消费信息
 
@@ -50,7 +74,7 @@
       * errcode: 返回码
       * cost: 消费数额
 
-### 挂失
+### 挂失操作
 
 - 校园卡挂失
 
@@ -93,6 +117,7 @@
 
       * errcode: 返回码
       * errmsg: 说明
+
 
 ### 全局返回码
 

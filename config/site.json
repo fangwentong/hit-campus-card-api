@@ -2,11 +2,4 @@
   "root": "http://localhost",
   "port": 3000,
   "secret": "harbin",
-  "db": {
-    "host": "localhost",
-    "port": 3306,
-    "user": "api",
-    "password": "api",
-    "database": "api"
-  }
 }
