@@ -5,6 +5,29 @@ API Reference
 
 #### POST 方法
 
+##### 身份验证
+
+- 验证身份信息
+
+    POST /api/verification
+
+    Headers required:
+
+        * Host
+        * Content-Type: `application/x-www-form-urlencoded` or `application/json`
+        * Content-Length
+        * x-api-signature: HMAC hex digest of the payload, using site's secret as the key.
+
+    Payload:
+
+        * username
+        * password
+
+    Returns @ JSON:
+
+        * errcode: 返回码
+        * errmsg: 说明
+
 ##### 获取信息
 
 - 获取今日消费信息
@@ -54,7 +77,7 @@ API Reference
       * errcode: 返回码
       * cost: 消费数额
 
-##### 挂失
+##### 挂失/取消挂失
 
 - 校园卡挂失
 
